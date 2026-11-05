@@ -1,0 +1,291 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        /* Cegah horizontal scrollbar global akibat element yang overflow */
+        overflow-x: hidden;
+    }
+
+    body {
+        font-family: var(--font-sans);
+        min-height: 100vh;
+        transition: background 0.8s ease;
+        /* Pastikan body tidak lebih lebar dari viewport */
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+}
+
+/* ============================================================
+   DYNAMIC WEATHER THEMES
+   Background berubah sesuai kondisi cuaca
+   ============================================================ */
+@layer components {
+
+    /* Default / loading state */
+    body {
+        background: linear-gradient(160deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+        background-attachment: fixed;
+    }
+
+    /* Cerah siang */
+    body.theme-sunny {
+        background: linear-gradient(160deg, #0ea5e9 0%, #2563eb 40%, #1d4ed8 100%);
+    }
+
+    /* Sebagian berawan */
+    body.theme-partly-cloudy {
+        background: linear-gradient(160deg, #3b82f6 0%, #6366f1 50%, #4338ca 100%);
+    }
+
+    /* Mendung */
+    body.theme-cloudy {
+        background: linear-gradient(160deg, #475569 0%, #334155 50%, #1e293b 100%);
+    }
+
+    /* Hujan */
+    body.theme-rain {
+        background: linear-gradient(160deg, #1e3a5f 0%, #1e40af 40%, #1e293b 100%);
+    }
+
+    /* Badai */
+    body.theme-storm {
+        background: linear-gradient(160deg, #1e1b4b 0%, #312e81 40%, #0f172a 100%);
+    }
+
+    /* Salju */
+    body.theme-snow {
+        background: linear-gradient(160deg, #93c5fd 0%, #bfdbfe 50%, #dbeafe 100%);
+    }
+
+    /* Malam */
+    body.theme-night {
+        background: linear-gradient(160deg, #020617 0%, #0f172a 50%, #1e1b4b 100%);
+    }
+
+    /* ============================================================
+       GLASSMORPHISM CARD
+       ============================================================ */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 1.25rem;
+        transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    }
+
+    .glass-card:hover {
+        background: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .glass-card-sm {
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.875rem;
+        transition: background 0.3s ease;
+    }
+
+    .glass-card-sm:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Input dengan efek glass */
+    .glass-input {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .glass-input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .glass-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+    }
+
+    /* ============================================================
+       SKELETON LOADING
+       ============================================================ */
+    .skeleton {
+        background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.06) 25%,
+            rgba(255, 255, 255, 0.12) 50%,
+            rgba(255, 255, 255, 0.06) 75%
+        );
+        background-size: 200% 100%;
+        animation: skeleton-shimmer 1.5s infinite;
+        border-radius: 0.5rem;
+    }
+
+    @keyframes skeleton-shimmer {
+        0%   { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    /* ============================================================
+       ANIMASI TRANSISI DATA
+       ============================================================ */
+    .weather-enter {
+        animation: weather-fade-up 0.5s ease forwards;
+    }
+
+    @keyframes weather-fade-up {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Delay berurutan untuk tiap card */
+    .stagger-1 { animation-delay: 0.05s; }
+    .stagger-2 { animation-delay: 0.10s; }
+    .stagger-3 { animation-delay: 0.15s; }
+    .stagger-4 { animation-delay: 0.20s; }
+    .stagger-5 { animation-delay: 0.25s; }
+    .stagger-6 { animation-delay: 0.30s; }
+
+    /* ============================================================
+       SCROLLBAR CUSTOM untuk hourly scroll
+       ============================================================ */
+    .scrollbar-thin::-webkit-scrollbar {
+        height: 4px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 2px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 2px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* ============================================================
+       WIND DIRECTION ARROW
+       ============================================================ */
+    .wind-arrow {
+        display: inline-block;
+        transition: transform 0.5s ease;
+    }
+
+    /* ============================================================
+       PROGRESS BAR AQI
+       ============================================================ */
+    .aqi-bar {
+        background: linear-gradient(
+            to right,
+            #22c55e 0%,
+            #eab308 20%,
+            #f97316 40%,
+            #ef4444 60%,
+            #a855f7 80%,
+            #7f1d1d 100%
+        );
+        border-radius: 9999px;
+        height: 6px;
+    }
+
+    /* ============================================================
+       FAVORITE CITY CARD — HOVER EFFECT
+       Digunakan khusus di favorite-list.blade.php.
+       Tidak mengubah .glass-card-sm yang dipakai di tempat lain.
+
+       Hover behavior:
+         - Naik 5px (translateY)
+         - Shadow meningkat
+         - Border sedikit lebih visible
+         - Background sedikit lebih terang
+         - Transition smooth 250ms ease-out
+
+       Reduced-motion: transform dan shadow dinonaktifkan,
+       hanya background/border yang berubah (no movement).
+       ============================================================ */
+    .fav-city-card {
+        /* Base state — sama dengan glass-card-sm */
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.10);
+        border-radius: 0.875rem;
+
+        /* Transition mencakup semua property yang akan berubah saat hover */
+        transition:
+            background    0.25s ease-out,
+            border-color  0.25s ease-out,
+            box-shadow    0.25s ease-out,
+            transform     0.25s ease-out;
+    }
+
+    .fav-city-card:hover {
+        background:   rgba(255, 255, 255, 0.11);
+        border-color: rgba(255, 255, 255, 0.22);
+        box-shadow:   0 8px 24px rgba(0, 0, 0, 0.35),
+                      0 2px  8px rgba(0, 0, 0, 0.20);
+        transform: translateY(-5px);
+    }
+
+    /* Weather icon di dalam card: sedikit scale saat card di-hover */
+    .fav-city-card:hover .fav-weather-icon {
+        transform: scale(1.12) translateY(-2px);
+    }
+
+    .fav-weather-icon {
+        transition: transform 0.25s ease-out;
+    }
+
+    /* Reduced-motion: hormati preferensi aksesibilitas pengguna.
+       Hanya background & border yang berubah — tidak ada gerakan. */
+    @media (prefers-reduced-motion: reduce) {
+        .fav-city-card {
+            transition: background 0.15s ease-out, border-color 0.15s ease-out;
+        }
+
+        .fav-city-card:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .fav-weather-icon,
+        .fav-city-card:hover .fav-weather-icon {
+            transition: none;
+            transform: none;
+        }
+    }
+}
